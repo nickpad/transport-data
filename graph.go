@@ -2,7 +2,7 @@ package transportdata
 
 type unixTime int64
 
-type Database map[string]StopNode
+type StopIndex map[string]StopNode
 
 type StopNode struct {
 	Id   string

@@ -5,7 +5,7 @@ import (
 )
 
 func TestLoadStops(t *testing.T) {
-	database := Database{}
+	database := StopIndex{}
 	LoadStops("data/stops.txt", database)
 	stopId := "20611"
 	expectedName := "Milsons Point Wharf"

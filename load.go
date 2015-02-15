@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func LoadStops(filePath string, database Database) {
+func LoadStops(filePath string, database StopIndex) {
 	file := loadFileOrExit(filePath)
 	reader := csv.NewReader(file)
 
