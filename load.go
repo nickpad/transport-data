@@ -2,38 +2,19 @@ package transportdata
 
 import (
 	"encoding/csv"
-	"io"
 	"log"
 	"os"
 )
 
 func LoadStops(filePath string) Database {
-	file, err := os.Open(filePath)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	file := loadFileOrExit(filePath)
 	reader := csv.NewReader(file)
 	database := Database{}
 
-	record, err := reader.Read()
+	// Skip over headers
+	reader.Read()
 
-	if err == io.EOF {
-		return database
-	} else if err != nil {
-		log.Fatal(err)
-	}
-
-	for record != nil {
-		record, err = reader.Read()
-
-		if err == io.EOF {
-			break
-		} else if err != nil {
-			log.Fatal(err)
-		}
-
+	for record, _ := reader.Read(); record != nil; record, _ = reader.Read() {
 		stopName := record[2]
 		hopEdges := make([]HopEdge, 0)
 		stopNode := StopNode{stopName, hopEdges}
@@ -41,4 +22,14 @@ func LoadStops(filePath string) Database {
 	}
 
 	return database
+}
+
+func loadFileOrExit(filePath string) *os.File {
+	file, err := os.Open(filePath)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return file
 }
