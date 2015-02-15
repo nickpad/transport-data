@@ -5,10 +5,14 @@ import (
 )
 
 func TestLoadStops(t *testing.T) {
-	database := LoadStops("data/stops.txt")
-	stopName := "Milsons Point Wharf"
+	database := Database{}
+	LoadStops("data/stops.txt", database)
+	stopId := "20611"
+	expectedName := "Milsons Point Wharf"
 
-	if database[stopName].Name != stopName {
-		t.Errorf("Unexpected stop name: %#v", stopName)
+	actualName := database[stopId].Name
+
+	if expectedName != actualName {
+		t.Errorf("Unexpected stop name: %#v", actualName)
 	}
 }
