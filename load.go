@@ -7,11 +7,7 @@ import (
 )
 
 func LoadStops(filePath string, database StopIndex) {
-	file := loadFileOrExit(filePath)
-	reader := csv.NewReader(file)
-
-	// Skip over headers
-	reader.Read()
+	reader := makeCsvReader(filePath)
 
 	for record, _ := reader.Read(); record != nil; record, _ = reader.Read() {
 		stopId := record[0]
@@ -22,12 +18,17 @@ func LoadStops(filePath string, database StopIndex) {
 	}
 }
 
-func loadFileOrExit(filePath string) *os.File {
+func makeCsvReader(filePath string) *csv.Reader {
 	file, err := os.Open(filePath)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return file
+	reader := csv.NewReader(file)
+
+	// Skip over headers
+	reader.Read()
+
+	return reader
 }
