@@ -2,7 +2,7 @@ package transportdata
 
 import "testing"
 
-func TestShortestPathSearch(t *testing.T) {
+func setupGraph() Graph {
 	graph := NewGraph()
 	graph.AddStop("1", "Central")
 	graph.AddStop("2", "Wynyard")
@@ -13,9 +13,22 @@ func TestShortestPathSearch(t *testing.T) {
 	graph.AddEdge("3", "4")
 	graph.AddEdge("1", "3")
 
+	return graph
+}
+
+func TestPathSearch(t *testing.T) {
+	graph := setupGraph()
 	distance := graph.PathSearch("1", "4")
 
 	if distance != 2 {
 		t.Fatalf("Expected 2 but got %#v", distance)
+	}
+}
+
+func BenchmarkPathSearch(b *testing.B) {
+	graph := setupGraph()
+
+	for n := 0; n < b.N; n++ {
+		graph.PathSearch("1", "4")
 	}
 }
