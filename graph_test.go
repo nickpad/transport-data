@@ -19,9 +19,10 @@ func setupGraph() Graph {
 func TestPathSearch(t *testing.T) {
 	graph := setupGraph()
 	distance := graph.PathSearch("1", "4")
+	expected := 2
 
-	if distance != 2 {
-		t.Fatalf("Expected 2 but got %#v", distance)
+	if distance != expected {
+		t.Fatalf("Expected %#v but got %#v", expected, distance)
 	}
 }
 
