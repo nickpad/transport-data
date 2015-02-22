@@ -1,16 +1,14 @@
 package transportdata
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestLoadStops(t *testing.T) {
-	database := StopIndex{}
-	LoadStops("data/stops.txt", database)
+	graph := NewGraph()
+	LoadStops("data/stops.txt", graph)
 	stopId := "20611"
 	expectedName := "Milsons Point Wharf"
 
-	actualName := database[stopId].Name
+	actualName := graph.nodes[stopId].Name
 
 	if expectedName != actualName {
 		t.Errorf("Unexpected stop name: %#v", actualName)

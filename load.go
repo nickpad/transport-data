@@ -6,15 +6,13 @@ import (
 	"os"
 )
 
-func LoadStops(filePath string, database StopIndex) {
+func LoadStops(filePath string, graph Graph) {
 	reader := makeCsvReader(filePath)
 
 	for record, _ := reader.Read(); record != nil; record, _ = reader.Read() {
 		stopId := record[0]
 		stopName := record[2]
-		hopEdges := make([]HopEdge, 0)
-		stopNode := StopNode{stopId, stopName, hopEdges}
-		database[stopNode.Id] = stopNode
+		graph.AddStop(stopId, stopName)
 	}
 }
 
