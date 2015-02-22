@@ -1,68 +1,70 @@
 package transportdata
 
-type Graph struct {
-	nodes graphNodes
-	edges graphEdges
+import "math"
+
+type graph struct {
+	nodes map[string]node
+	edges map[string][]edge
 }
 
-type Stop struct {
+type node struct {
 	Id   string
 	Name string
 }
 
-type distanceMap map[string]int
-type graphEdges map[string]StringSet
-type graphNodes map[string]Stop
-type unixTime int64
-
-const maxDistance int = 1000
-
-func NewGraph() Graph {
-	nodes := make(graphNodes)
-	edges := make(graphEdges)
-	return Graph{nodes, edges}
+type edge struct {
+	FromNode *node
+	ToNode   *node
 }
 
-func (graph *Graph) AddStop(id string, name string) {
-	stop := Stop{id, name}
-	graph.nodes[stop.Id] = stop
+const maxDistance int = math.MaxInt64
+
+func NewGraph() graph {
+	nodes := make(map[string]node)
+	edges := make(map[string][]edge)
+	return graph{nodes, edges}
 }
 
-func (graph *Graph) AddEdge(fromId string, toId string) {
-	graph.initEdgesFrom(fromId)
-	graph.edges[fromId].Add(toId)
+func (graph graph) AddNode(id, name string) {
+	node := node{id, name}
+	edges := make([]edge, 0)
+	graph.nodes[node.Id] = node
+	graph.edges[node.Id] = edges
 }
 
-func (graph *Graph) initEdgesFrom(stopId string) {
-	if _, ok := graph.edges[stopId]; !ok {
-		graph.edges[stopId] = map[string]struct{}{}
-	}
+func (graph graph) AddEdge(fromId, toId string) {
+	from := graph.nodes[fromId]
+	to := graph.nodes[toId]
+	edge := edge{&from, &to}
+	graph.edges[fromId] = append(graph.edges[fromId], edge)
 }
 
-func (graph *Graph) PathSearch(fromId, toId string) int {
-	distances := make(distanceMap)
+func PathSearch(graph graph, startId, endId string) []string {
+	distanceMap := make(map[string]int)
 	unvisited := make(StringSet)
+	footprints := make(map[string]string)
 
-	for key := range graph.nodes {
-		distances[key] = maxDistance
-		unvisited.Add(key)
+	for nodeId := range graph.nodes {
+		distanceMap[nodeId] = maxDistance
+		unvisited.Add(nodeId)
 	}
 
-	distances[fromId] = 0
+	distanceMap[startId] = 0
 
-	current := fromId
+	current := startId
 
 	for {
-		for neigbour := range graph.edges[current] {
-			newDistance := distances[current] + 1
-			if newDistance < distances[neigbour] {
-				distances[neigbour] = newDistance
+		for _, edge := range graph.edges[current] {
+			newDistance := distanceMap[current] + 1
+			if newDistance < distanceMap[edge.ToNode.Id] {
+				distanceMap[edge.ToNode.Id] = newDistance
+				footprints[edge.ToNode.Id] = current
 			}
 		}
 
 		unvisited.Remove(current)
 
-		if current == toId {
+		if current == endId {
 			break
 		}
 
@@ -70,24 +72,39 @@ func (graph *Graph) PathSearch(fromId, toId string) int {
 			break
 		}
 
-		current = findNextStop(unvisited, distances)
+		// Find the next current node
+		min := maxDistance
+		nextNodeId := unvisited.FirstValue()
+
+		for nodeId := range unvisited {
+			distance := distanceMap[nodeId]
+
+			if distance < min {
+				min = distance
+				nextNodeId = nodeId
+			}
+		}
+
+		current = nextNodeId
 	}
 
-	return distances[toId]
-}
+	path := []string{endId}
+	key := current
 
-func findNextStop(unvisited StringSet, distances distanceMap) string {
-	min := maxDistance
-	nextStopId := unvisited.FirstValue()
+	for {
+		previous, ok := footprints[key]
 
-	for stopId := range unvisited {
-		distance := distances[stopId]
-
-		if distance < min {
-			min = distance
-			nextStopId = stopId
+		if ok {
+			path = append(path, previous)
+			key = previous
+		} else {
+			break
 		}
 	}
 
-	return nextStopId
+	for i, j := 0, len(path)-1; i < j; i, j = i+1, j-1 {
+		path[i], path[j] = path[j], path[i]
+	}
+
+	return path
 }
