@@ -48,7 +48,11 @@ func TestPathSearch(t *testing.T) {
 	graph := setupGraph()
 	expected := []string{"milsons point", "wynyard", "circular quay", "st james"}
 
-	path := PathSearch(graph, "milsons point", "st james")
+	path, err := PathSearch(graph, "milsons point", "st james")
+
+	if err != nil {
+		t.Error(err)
+	}
 
 	if fmt.Sprint(path) != fmt.Sprint(expected) {
 		t.Fatalf("Expected %#v but got %#v", expected, path)
