@@ -44,7 +44,7 @@ func setupGraph() graph {
 	return graph
 }
 
-func TestPathSearch(t *testing.T) {
+func TestSuccesfulPathSearch(t *testing.T) {
 	graph := setupGraph()
 	expected := []string{"milsons point", "wynyard", "circular quay", "st james"}
 
@@ -56,6 +56,37 @@ func TestPathSearch(t *testing.T) {
 
 	if fmt.Sprint(path) != fmt.Sprint(expected) {
 		t.Fatalf("Expected %#v but got %#v", expected, path)
+	}
+}
+
+func TestImpossibleRoute(t *testing.T) {
+	graph := setupGraph()
+	graph.AddNodeWithNameAndId("nowhere")
+
+	_, err := PathSearch(graph, "circular quay", "nowhere")
+
+	if err == nil {
+		t.Fatal("Expected error but got nil")
+	}
+}
+
+func TestPathSearchWithNonExistantStart(t *testing.T) {
+	graph := setupGraph()
+
+	_, err := PathSearch(graph, "north sydney", "central")
+
+	if err == nil {
+		t.Fatal("Expected error but got nil")
+	}
+}
+
+func TestPathSearchWithNonExistantEnd(t *testing.T) {
+	graph := setupGraph()
+
+	_, err := PathSearch(graph, "circular quay", "north sydney")
+
+	if err == nil {
+		t.Fatal("Expected error but got nil")
 	}
 }
 

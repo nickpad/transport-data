@@ -100,7 +100,7 @@ func (state *pathSearchState) searchIsDone() bool {
 	return false
 }
 
-func (state *pathSearchState) pathTo(nodeId string) []string {
+func (state *pathSearchState) pathTo(nodeId string) ([]string, error) {
 	path := []string{nodeId}
 
 	for {
@@ -114,7 +114,11 @@ func (state *pathSearchState) pathTo(nodeId string) []string {
 		}
 	}
 
-	return path
+	if len(path) > 1 {
+		return path, nil
+	} else {
+		return nil, fmt.Errorf("no path found to %#v", nodeId)
+	}
 }
 
 func PathSearch(graph graph, startId, endId string) ([]string, error) {
@@ -147,5 +151,7 @@ func PathSearch(graph graph, startId, endId string) ([]string, error) {
 		state.current = nextId
 	}
 
-	return state.pathTo(endId), nil
+	path, err := state.pathTo(endId)
+
+	return path, err
 }
