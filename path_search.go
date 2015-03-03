@@ -1,11 +1,8 @@
 package transportdata
 
-import (
-	"fmt"
-	"math"
-)
+import "fmt"
 
-const maxDistance int = math.MaxInt64
+const maxDistance int = 1000000
 
 type pathSearchState struct {
 	distances   map[string]int
