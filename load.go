@@ -6,13 +6,12 @@ import (
 	"os"
 )
 
-func LoadStops(filePath string, graph graph) {
+func loadStops(filePath string, graph graph) {
 	reader := makeCsvReader(filePath)
 
 	for record, _ := reader.Read(); record != nil; record, _ = reader.Read() {
-		stopId := record[0]
 		stopName := record[2]
-		graph.AddNode(stopId, stopName)
+		graph.addVertex(stopName)
 	}
 }
 
