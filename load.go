@@ -25,7 +25,11 @@ func makeCsvReader(filePath string) *csv.Reader {
 	reader := csv.NewReader(file)
 
 	// Skip over headers
-	reader.Read()
+	_, err = reader.Read()
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	return reader
 }
