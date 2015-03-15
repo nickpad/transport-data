@@ -30,13 +30,12 @@ func preparePriotityQueue(graph graph, start *vertex) (*PriorityQueue, map[strin
 	return &pq, itemMap
 }
 
-func shortestPathSearch(graph graph, start *vertex) *PriorityQueue {
+func search(graph graph, start *vertex, end *vertex) {
 	pq, itemMap := preparePriotityQueue(graph, start)
 
 	for pq.Len() > 0 {
 		pqItem := heap.Pop(pq).(*Item)
 		currentVert := graph[pqItem.value]
-
 		for _, successor := range currentVert.successors {
 			newDistance := currentVert.distance + currentVert.getWeight(successor)
 			if newDistance < successor.distance {
@@ -49,5 +48,4 @@ func shortestPathSearch(graph graph, start *vertex) *PriorityQueue {
 			}
 		}
 	}
-	return pq
 }

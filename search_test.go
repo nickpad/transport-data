@@ -24,11 +24,11 @@ func TestSuccesfulPathSearch(t *testing.T) {
 	end := graph["st james"]
 	expected := "milsons point -> wynyard -> circular quay -> st james"
 
-	shortestPathSearch(graph, start)
+	search(graph, start, end)
 	path := end.pathFromStart()
 
 	if path.String() != expected {
-		t.Fatalf("Expected %#v but got %#v", expected, path)
+		t.Fatalf("Expected %v but got %v", expected, path)
 	}
 }
 
@@ -38,19 +38,20 @@ func TestImpossibleRoute(t *testing.T) {
 	start := graph["milsons point"]
 	end := graph["nowhere"]
 
-	shortestPathSearch(graph, start)
+	search(graph, start, end)
 	path := end.pathFromStart()
 
 	if path.String() != "" {
-		t.Fatalf("Expected empty path but got %#v", path)
+		t.Fatalf("Expected empty path but got %v", path)
 	}
 }
 
 func BenchmarkDjikstra(b *testing.B) {
 	graph := setupDjikstraGraph()
 	start := graph["milsons point"]
+	end := graph["st james"]
 
 	for n := 0; n < b.N; n++ {
-		shortestPathSearch(graph, start)
+		search(graph, start, end)
 	}
 }
