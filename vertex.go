@@ -16,8 +16,8 @@ func (vtx *vertex) getWeight(destination *vertex) int {
 	return 1
 }
 
-func (vtx *vertex) pathFromStart() []vertex {
-	path := []vertex{}
+func (vtx *vertex) pathFromStart() path {
+	path := path{}
 	current := vtx
 
 	if current.predecessor != nil {

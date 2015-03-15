@@ -1,9 +1,6 @@
 package transportdata
 
-import (
-	"strings"
-	"testing"
-)
+import "testing"
 
 func setupDjikstraGraph() graph {
 	graph := make(graph)
@@ -21,14 +18,6 @@ func setupDjikstraGraph() graph {
 	return graph
 }
 
-func formatPath(path []vertex) string {
-	vertexIds := []string{}
-	for _, vertex := range path {
-		vertexIds = append(vertexIds, vertex.vertexId)
-	}
-	return strings.Join(vertexIds, " -> ")
-}
-
 func TestSuccesfulPathSearch(t *testing.T) {
 	graph := setupDjikstraGraph()
 	start := graph["milsons point"]
@@ -36,9 +25,9 @@ func TestSuccesfulPathSearch(t *testing.T) {
 	expected := "milsons point -> wynyard -> circular quay -> st james"
 
 	shortestPathSearch(graph, start)
-	path := formatPath(end.pathFromStart())
+	path := end.pathFromStart()
 
-	if path != expected {
+	if path.String() != expected {
 		t.Fatalf("Expected %#v but got %#v", expected, path)
 	}
 }
@@ -50,9 +39,9 @@ func TestImpossibleRoute(t *testing.T) {
 	end := graph["nowhere"]
 
 	shortestPathSearch(graph, start)
-	path := formatPath(end.pathFromStart())
+	path := end.pathFromStart()
 
-	if path != "" {
+	if path.String() != "" {
 		t.Fatalf("Expected empty path but got %#v", path)
 	}
 }
