@@ -2,9 +2,9 @@ package transportdata
 
 type graph map[string]*vertex
 
-func (graph graph) addVertex(vertexId string) *vertex {
-	vtx := newVertex(vertexId)
-	graph[vertexId] = vtx
+func (graph graph) addVertex(vertexID string) *vertex {
+	vtx := newVertex(vertexID)
+	graph[vertexID] = vtx
 	return vtx
 }
 

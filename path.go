@@ -5,9 +5,9 @@ import "strings"
 type path []vertex
 
 func (p path) String() string {
-	vertexIds := []string{}
+	vertexIDs := []string{}
 	for _, vertex := range p {
-		vertexIds = append(vertexIds, vertex.vertexId)
+		vertexIDs = append(vertexIDs, vertex.vertexID)
 	}
-	return strings.Join(vertexIds, " -> ")
+	return strings.Join(vertexIDs, " -> ")
 }

@@ -29,13 +29,13 @@ func prepareSearch(graph graph, start *vertex) *state {
 	i := 0
 	for _, vtx := range graph {
 		pqItem := &Item{
-			value:    vtx.vertexId,
-			priority: maxDistance - state.getDistance(vtx.vertexId),
+			value:    vtx.vertexID,
+			priority: maxDistance - state.getDistance(vtx.vertexID),
 			index:    i,
 		}
 
 		pq[i] = pqItem
-		state.itemMap[vtx.vertexId] = pqItem
+		state.itemMap[vtx.vertexID] = pqItem
 		i++
 	}
 
@@ -44,22 +44,22 @@ func prepareSearch(graph graph, start *vertex) *state {
 	return &state
 }
 
-func (state *state) getDistance(vertexId string) int {
-	if vertexId == state.start.vertexId {
+func (state *state) getDistance(vertexID string) int {
+	if vertexID == state.start.vertexID {
 		return 0
 	}
 
-	distance, ok := state.distances[vertexId]
+	distance, ok := state.distances[vertexID]
 
 	if ok {
 		return distance
-	} else {
-		return maxDistance
 	}
+
+	return maxDistance
 }
 
 func (state *state) increasePriority(vertex *vertex, amount int) {
-	item, ok := state.itemMap[vertex.vertexId]
+	item, ok := state.itemMap[vertex.vertexID]
 	if ok {
 		state.priorityQueue.IncreasePriority(item, amount)
 	}
@@ -70,12 +70,12 @@ func (state *state) search(graph graph, end *vertex) {
 		pqItem := heap.Pop(state.priorityQueue).(*Item)
 		currentVert := graph[pqItem.value]
 		for _, successor := range currentVert.successors {
-			currentDistance := state.getDistance(currentVert.vertexId)
-			successorDistance := state.getDistance(successor.vertexId)
+			currentDistance := state.getDistance(currentVert.vertexID)
+			successorDistance := state.getDistance(successor.vertexID)
 			newDistance := currentDistance + 1 // Using 1 as a placeholder weight.
 			if newDistance < successorDistance {
-				state.distances[successor.vertexId] = newDistance
-				state.predecessors[successor.vertexId] = currentVert
+				state.distances[successor.vertexID] = newDistance
+				state.predecessors[successor.vertexID] = currentVert
 				state.increasePriority(successor, newDistance)
 			}
 		}
@@ -85,14 +85,14 @@ func (state *state) search(graph graph, end *vertex) {
 func (state *state) pathTo(vtx *vertex) path {
 	path := path{}
 	current := vtx
-	predecessor := state.predecessors[current.vertexId]
+	predecessor := state.predecessors[current.vertexID]
 
 	if predecessor != nil {
 		path = append(path, *current)
 	}
 
 	for {
-		predecessor := state.predecessors[current.vertexId]
+		predecessor := state.predecessors[current.vertexID]
 
 		if predecessor != nil {
 			path = append([]vertex{*predecessor}, path...)

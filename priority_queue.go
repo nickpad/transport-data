@@ -27,6 +27,7 @@ func (pq PriorityQueue) Swap(i, j int) {
 	pq[j].index = j
 }
 
+// Push adds a new Item to the queue.
 func (pq *PriorityQueue) Push(x interface{}) {
 	n := len(*pq)
 	item := x.(*Item)
@@ -34,6 +35,7 @@ func (pq *PriorityQueue) Push(x interface{}) {
 	*pq = append(*pq, item)
 }
 
+// Pop removes the highest priority item from the queue.
 func (pq *PriorityQueue) Pop() interface{} {
 	old := *pq
 	n := len(old)
@@ -43,6 +45,7 @@ func (pq *PriorityQueue) Pop() interface{} {
 	return item
 }
 
+// IncreasePriority increases priority of the given item by given amount.
 func (pq *PriorityQueue) IncreasePriority(item *Item, increaseBy int) {
 	item.priority += increaseBy
 	heap.Fix(pq, item.index)

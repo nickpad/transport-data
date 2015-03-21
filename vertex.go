@@ -1,11 +1,11 @@
 package transportdata
 
 type vertex struct {
-	vertexId   string
+	vertexID   string
 	successors []*vertex
 }
 
-func newVertex(vertexId string) *vertex {
-	successors := make([]*vertex, 0)
-	return &vertex{vertexId, successors}
+func newVertex(vertexID string) *vertex {
+	var successors []*vertex
+	return &vertex{vertexID, successors}
 }
