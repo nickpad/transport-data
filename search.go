@@ -5,11 +5,11 @@ import (
 	"math"
 )
 
-const maxDistance int = int(math.MaxInt32)
+const maxDistance int64 = math.MaxInt64
 
 type state struct {
 	start         *vertex
-	distances     map[string]int
+	distances     map[string]int64
 	predecessors  map[string]*vertex
 	priorityQueue *PriorityQueue
 	itemMap       map[string]*Item
@@ -20,7 +20,7 @@ func prepareSearch(graph graph, start *vertex) *state {
 
 	state := state{
 		start:         start,
-		distances:     map[string]int{},
+		distances:     map[string]int64{},
 		predecessors:  map[string]*vertex{},
 		priorityQueue: &pq,
 		itemMap:       map[string]*Item{},
@@ -44,7 +44,7 @@ func prepareSearch(graph graph, start *vertex) *state {
 	return &state
 }
 
-func (state *state) getDistance(vertexID string) int {
+func (state *state) getDistance(vertexID string) int64 {
 	if vertexID == state.start.vertexID {
 		return 0
 	}
@@ -58,7 +58,7 @@ func (state *state) getDistance(vertexID string) int {
 	return maxDistance
 }
 
-func (state *state) increasePriority(vertex *vertex, amount int) {
+func (state *state) increasePriority(vertex *vertex, amount int64) {
 	item, ok := state.itemMap[vertex.vertexID]
 	if ok {
 		state.priorityQueue.IncreasePriority(item, amount)
@@ -69,10 +69,11 @@ func (state *state) search(graph graph, end *vertex) {
 	for state.priorityQueue.Len() > 0 {
 		pqItem := heap.Pop(state.priorityQueue).(*Item)
 		currentVert := graph[pqItem.value]
-		for _, successor := range currentVert.successors {
+		for _, edge := range currentVert.edges {
+			successor := edge.to
 			currentDistance := state.getDistance(currentVert.vertexID)
 			successorDistance := state.getDistance(successor.vertexID)
-			newDistance := currentDistance + 1 // Using 1 as a placeholder weight.
+			newDistance := currentDistance + edge.weight()
 			if newDistance < successorDistance {
 				state.distances[successor.vertexID] = newDistance
 				state.predecessors[successor.vertexID] = currentVert

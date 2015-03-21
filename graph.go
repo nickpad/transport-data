@@ -21,8 +21,11 @@ func (graph graph) connectVertices(from, to string) error {
 		toVertex = graph.addVertex(to)
 	}
 
-	fromVertex.successors = append(fromVertex.successors, toVertex)
-	toVertex.successors = append(toVertex.successors, fromVertex)
+	fromEdge := edge{fromVertex, toVertex, 0, 1}
+	toEdge := edge{toVertex, fromVertex, 0, 1}
+
+	fromVertex.edges = append(fromVertex.edges, &fromEdge)
+	toVertex.edges = append(toVertex.edges, &toEdge)
 
 	return nil
 }

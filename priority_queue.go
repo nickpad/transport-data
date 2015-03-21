@@ -8,7 +8,7 @@ import "container/heap"
 // An Item is something we manage in a priority queue.
 type Item struct {
 	value    string // The value of the item; arbitrary.
-	priority int    // The priority of the item in the queue.
+	priority int64  // The priority of the item in the queue.
 	index    int    // The index of the item in the heap.
 }
 
@@ -46,7 +46,7 @@ func (pq *PriorityQueue) Pop() interface{} {
 }
 
 // IncreasePriority increases priority of the given item by given amount.
-func (pq *PriorityQueue) IncreasePriority(item *Item, increaseBy int) {
+func (pq *PriorityQueue) IncreasePriority(item *Item, increaseBy int64) {
 	item.priority += increaseBy
 	heap.Fix(pq, item.index)
 }

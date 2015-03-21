@@ -1,11 +1,11 @@
 package transportdata
 
 type vertex struct {
-	vertexID   string
-	successors []*vertex
+	vertexID string
+	edges    []*edge
 }
 
 func newVertex(vertexID string) *vertex {
-	var successors []*vertex
-	return &vertex{vertexID, successors}
+	var edges []*edge
+	return &vertex{vertexID, edges}
 }
