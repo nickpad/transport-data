@@ -2,12 +2,17 @@ package transportdata
 
 import "strings"
 
-type path []vertex
+type path []edge
 
 func (p path) String() string {
 	vertexIDs := []string{}
-	for _, vertex := range p {
-		vertexIDs = append(vertexIDs, vertex.vertexID)
+
+	if len(p) > 0 {
+		vertexIDs = append(vertexIDs, p[0].from.vertexID)
+	}
+
+	for _, edge := range p {
+		vertexIDs = append(vertexIDs, edge.to.vertexID)
 	}
 	return strings.Join(vertexIDs, " -> ")
 }

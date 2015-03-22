@@ -8,11 +8,11 @@ import (
 const maxDistance int64 = math.MaxInt64
 
 type state struct {
-	start         *vertex
-	distances     map[string]int64
-	predecessors  map[string]*vertex
-	priorityQueue *PriorityQueue
-	itemMap       map[string]*Item
+	start         *vertex           // The vertex to search from
+	priorityQueue *PriorityQueue    // Used to determine next vertex to explore
+	distances     map[*vertex]int64 // Current distances for each vertex
+	predecessors  map[*vertex]*edge // Predecessor edge used to reach each vertex
+	itemMap       map[*vertex]*Item // Maps vertices to priorityQueue Items
 }
 
 func newState(graph graph, start *vertex) *state {
@@ -20,22 +20,22 @@ func newState(graph graph, start *vertex) *state {
 
 	state := state{
 		start:         start,
-		distances:     map[string]int64{},
-		predecessors:  map[string]*vertex{},
 		priorityQueue: &pq,
-		itemMap:       map[string]*Item{},
+		distances:     map[*vertex]int64{},
+		predecessors:  map[*vertex]*edge{},
+		itemMap:       map[*vertex]*Item{},
 	}
 
 	i := 0
 	for _, vtx := range graph {
 		pqItem := &Item{
 			value:    vtx.vertexID,
-			priority: maxDistance - state.getDistance(vtx.vertexID),
+			priority: maxDistance - state.getDistance(vtx),
 			index:    i,
 		}
 
 		pq[i] = pqItem
-		state.itemMap[vtx.vertexID] = pqItem
+		state.itemMap[vtx] = pqItem
 		i++
 	}
 
@@ -44,12 +44,12 @@ func newState(graph graph, start *vertex) *state {
 	return &state
 }
 
-func (state *state) getDistance(vertexID string) int64 {
-	if vertexID == state.start.vertexID {
+func (state *state) getDistance(vertex *vertex) int64 {
+	if vertex == state.start {
 		return 0
 	}
 
-	distance, ok := state.distances[vertexID]
+	distance, ok := state.distances[vertex]
 
 	if ok {
 		return distance
@@ -59,24 +59,24 @@ func (state *state) getDistance(vertexID string) int64 {
 }
 
 func (state *state) increasePriority(vertex *vertex, amount int64) {
-	item, ok := state.itemMap[vertex.vertexID]
+	item, ok := state.itemMap[vertex]
 	if ok {
 		state.priorityQueue.IncreasePriority(item, amount)
 	}
 }
 
-func (state *state) search(graph graph, end *vertex) {
+func (state *state) search(graph graph) {
 	for state.priorityQueue.Len() > 0 {
 		pqItem := heap.Pop(state.priorityQueue).(*Item)
 		currentVert := graph[pqItem.value]
 		for _, edge := range currentVert.edges {
 			successor := edge.to
-			currentDistance := state.getDistance(currentVert.vertexID)
-			successorDistance := state.getDistance(successor.vertexID)
+			currentDistance := state.getDistance(currentVert)
+			successorDistance := state.getDistance(successor)
 			newDistance := currentDistance + edge.weight()
 			if newDistance < successorDistance {
-				state.distances[successor.vertexID] = newDistance
-				state.predecessors[successor.vertexID] = currentVert
+				state.distances[successor] = newDistance
+				state.predecessors[successor] = edge
 				state.increasePriority(successor, newDistance)
 			}
 		}
@@ -86,18 +86,13 @@ func (state *state) search(graph graph, end *vertex) {
 func (state *state) pathTo(vtx *vertex) path {
 	path := path{}
 	current := vtx
-	predecessor := state.predecessors[current.vertexID]
-
-	if predecessor != nil {
-		path = append(path, *current)
-	}
 
 	for {
-		predecessor := state.predecessors[current.vertexID]
+		predecessor, ok := state.predecessors[current]
 
-		if predecessor != nil {
-			path = append([]vertex{*predecessor}, path...)
-			current = predecessor
+		if ok {
+			path = append([]edge{*predecessor}, path...)
+			current = predecessor.from
 		} else {
 			break
 		}
