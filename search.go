@@ -15,7 +15,7 @@ type state struct {
 	itemMap       map[string]*Item
 }
 
-func prepareSearch(graph graph, start *vertex) *state {
+func newState(graph graph, start *vertex) *state {
 	pq := make(PriorityQueue, len(graph))
 
 	state := state{

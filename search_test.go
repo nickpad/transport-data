@@ -23,7 +23,7 @@ func TestSuccesfulPathSearch(t *testing.T) {
 	start := graph["milsons point"]
 	end := graph["st james"]
 	expected := "milsons point -> wynyard -> circular quay -> st james"
-	state := prepareSearch(graph, start)
+	state := newState(graph, start)
 
 	state.search(graph, end)
 	path := state.pathTo(end)
@@ -38,7 +38,7 @@ func TestImpossibleRoute(t *testing.T) {
 	graph.addVertex("nowhere")
 	start := graph["milsons point"]
 	end := graph["nowhere"]
-	state := prepareSearch(graph, start)
+	state := newState(graph, start)
 
 	state.search(graph, end)
 	path := state.pathTo(end)
@@ -54,7 +54,7 @@ func BenchmarkDjikstra(b *testing.B) {
 	end := graph["st james"]
 
 	for n := 0; n < b.N; n++ {
-		state := prepareSearch(graph, start)
+		state := newState(graph, start)
 		state.search(graph, end)
 	}
 }
