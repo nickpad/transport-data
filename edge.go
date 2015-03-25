@@ -1,12 +1,13 @@
 package transportdata
 
-type edge struct {
-	from    *vertex
-	to      *vertex
-	departs int64
-	arrives int64
+// Edge joins two vertices and has a departure and arrival time.
+type Edge struct {
+	From    *Vertex
+	To      *Vertex
+	Departs int64
+	Arrives int64
 }
 
-func (edge *edge) weight() int64 {
-	return edge.arrives - edge.departs
+func (edge *Edge) weight() int64 {
+	return edge.Arrives - edge.Departs
 }

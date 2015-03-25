@@ -11,30 +11,30 @@ const maxDistance int64 = math.MaxInt64
 // State stores the current state of a search.
 type State struct {
 	graph         graph             // The graph to search
-	start         *vertex           // The vertex to search from
+	start         *Vertex           // The vertex to search from
 	priorityQueue *PriorityQueue    // Used to determine next vertex to explore
-	distances     map[*vertex]int64 // Current distances for each vertex
-	predecessors  map[*vertex]*edge // Predecessor edge used to reach each vertex
-	itemMap       map[*vertex]*Item // Maps vertices to priorityQueue Items
+	distances     map[*Vertex]int64 // Current distances for each vertex
+	predecessors  map[*Vertex]*Edge // Predecessor edge used to reach each vertex
+	itemMap       map[*Vertex]*Item // Maps vertices to priorityQueue Items
 }
 
 // NewState initializes a new State instance.
-func NewState(graph graph, start *vertex) *State {
+func NewState(graph graph, start *Vertex) *State {
 	pq := make(PriorityQueue, len(graph))
 
 	state := State{
 		graph:         graph,
 		start:         start,
 		priorityQueue: &pq,
-		distances:     map[*vertex]int64{},
-		predecessors:  map[*vertex]*edge{},
-		itemMap:       map[*vertex]*Item{},
+		distances:     map[*Vertex]int64{},
+		predecessors:  map[*Vertex]*Edge{},
+		itemMap:       map[*Vertex]*Item{},
 	}
 
 	i := 0
 	for _, vtx := range graph {
 		pqItem := &Item{
-			value:    vtx.vertexID,
+			value:    vtx.VertexID,
 			priority: maxDistance - state.getDistance(vtx),
 			index:    i,
 		}
@@ -49,7 +49,7 @@ func NewState(graph graph, start *vertex) *State {
 	return &state
 }
 
-func (state *State) getDistance(vertex *vertex) int64 {
+func (state *State) getDistance(vertex *Vertex) int64 {
 	if vertex == state.start {
 		return 0
 	}
@@ -63,19 +63,20 @@ func (state *State) getDistance(vertex *vertex) int64 {
 	return maxDistance
 }
 
-func (state *State) increasePriority(vertex *vertex, amount int64) {
+func (state *State) increasePriority(vertex *Vertex, amount int64) {
 	item, ok := state.itemMap[vertex]
 	if ok {
 		state.priorityQueue.IncreasePriority(item, amount)
 	}
 }
 
-func (state *State) search() {
+// Search performs a shortest-path search over the State graph.
+func (state *State) Search() {
 	for state.priorityQueue.Len() > 0 {
 		pqItem := heap.Pop(state.priorityQueue).(*Item)
 		currentVert := state.graph[pqItem.value]
-		for _, edge := range currentVert.edges {
-			successor := edge.to
+		for _, edge := range currentVert.Edges {
+			successor := edge.To
 			currentDistance := state.getDistance(currentVert)
 			successorDistance := state.getDistance(successor)
 			newDistance := currentDistance + edge.weight()
@@ -88,16 +89,17 @@ func (state *State) search() {
 	}
 }
 
-func (state *State) pathTo(vtx *vertex) path {
-	path := path{}
+// PathTo returns the path from the State start to the given vertex.
+func (state *State) PathTo(vtx *Vertex) Path {
+	path := Path{}
 	current := vtx
 
 	for {
 		predecessor, ok := state.predecessors[current]
 
 		if ok {
-			path = append([]edge{*predecessor}, path...)
-			current = predecessor.from
+			path = append([]Edge{*predecessor}, path...)
+			current = predecessor.From
 		} else {
 			break
 		}

@@ -1,8 +1,8 @@
 package transportdata
 
-type graph map[string]*vertex
+type graph map[string]*Vertex
 
-func (graph graph) addVertex(vertexID string) *vertex {
+func (graph graph) addVertex(vertexID string) *Vertex {
 	vtx := newVertex(vertexID)
 	graph[vertexID] = vtx
 	return vtx
@@ -21,11 +21,11 @@ func (graph graph) connectVertices(from, to string) error {
 		toVertex = graph.addVertex(to)
 	}
 
-	fromEdge := edge{fromVertex, toVertex, 0, 1}
-	toEdge := edge{toVertex, fromVertex, 0, 1}
+	fromEdge := Edge{fromVertex, toVertex, 0, 1}
+	toEdge := Edge{toVertex, fromVertex, 0, 1}
 
-	fromVertex.edges = append(fromVertex.edges, &fromEdge)
-	toVertex.edges = append(toVertex.edges, &toEdge)
+	fromVertex.Edges = append(fromVertex.Edges, &fromEdge)
+	toVertex.Edges = append(toVertex.Edges, &toEdge)
 
 	return nil
 }

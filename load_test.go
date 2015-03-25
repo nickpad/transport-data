@@ -8,7 +8,7 @@ func TestLoadStops(t *testing.T) {
 
 	loadStops("fixtures/stops.txt", graph)
 
-	vertexID := graph[stopName].vertexID
+	vertexID := graph[stopName].VertexID
 	if vertexID != stopName {
 		t.Errorf("Unexpected stop name: %#v", vertexID)
 	}

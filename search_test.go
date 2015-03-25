@@ -25,8 +25,8 @@ func TestSuccesfulPathSearch(t *testing.T) {
 	expected := "milsons point -> wynyard -> circular quay -> st james"
 	state := NewState(graph, start)
 
-	state.search()
-	path := state.pathTo(end)
+	state.Search()
+	path := state.PathTo(end)
 
 	if path.String() != expected {
 		t.Fatalf("Expected %v but got %v", expected, path)
@@ -40,8 +40,8 @@ func TestImpossibleRoute(t *testing.T) {
 	end := graph["nowhere"]
 	state := NewState(graph, start)
 
-	state.search()
-	path := state.pathTo(end)
+	state.Search()
+	path := state.PathTo(end)
 
 	if path.String() != "" {
 		t.Fatalf("Expected empty path but got %v", path)
@@ -54,6 +54,6 @@ func BenchmarkDjikstra(b *testing.B) {
 
 	for n := 0; n < b.N; n++ {
 		state := NewState(graph, start)
-		state.search()
+		state.Search()
 	}
 }

@@ -1,11 +1,12 @@
 package transportdata
 
-type vertex struct {
-	vertexID string
-	edges    []*edge
+// Vertex represents a graph vertex with zero or more edges.
+type Vertex struct {
+	VertexID string
+	Edges    []*Edge
 }
 
-func newVertex(vertexID string) *vertex {
-	var edges []*edge
-	return &vertex{vertexID, edges}
+func newVertex(vertexID string) *Vertex {
+	var edges []*Edge
+	return &Vertex{vertexID, edges}
 }
