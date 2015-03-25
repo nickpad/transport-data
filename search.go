@@ -8,6 +8,7 @@ import (
 const maxDistance int64 = math.MaxInt64
 
 type state struct {
+	graph         graph             // The graph to search
 	start         *vertex           // The vertex to search from
 	priorityQueue *PriorityQueue    // Used to determine next vertex to explore
 	distances     map[*vertex]int64 // Current distances for each vertex
@@ -19,6 +20,7 @@ func newState(graph graph, start *vertex) *state {
 	pq := make(PriorityQueue, len(graph))
 
 	state := state{
+		graph:         graph,
 		start:         start,
 		priorityQueue: &pq,
 		distances:     map[*vertex]int64{},
@@ -65,10 +67,10 @@ func (state *state) increasePriority(vertex *vertex, amount int64) {
 	}
 }
 
-func (state *state) search(graph graph) {
+func (state *state) search() {
 	for state.priorityQueue.Len() > 0 {
 		pqItem := heap.Pop(state.priorityQueue).(*Item)
-		currentVert := graph[pqItem.value]
+		currentVert := state.graph[pqItem.value]
 		for _, edge := range currentVert.edges {
 			successor := edge.to
 			currentDistance := state.getDistance(currentVert)
