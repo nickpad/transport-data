@@ -5,9 +5,11 @@ import (
 	"math"
 )
 
+// The maximum distance a vertex can be from the start vertex.
 const maxDistance int64 = math.MaxInt64
 
-type state struct {
+// State stores the current state of a search.
+type State struct {
 	graph         graph             // The graph to search
 	start         *vertex           // The vertex to search from
 	priorityQueue *PriorityQueue    // Used to determine next vertex to explore
@@ -16,10 +18,11 @@ type state struct {
 	itemMap       map[*vertex]*Item // Maps vertices to priorityQueue Items
 }
 
-func newState(graph graph, start *vertex) *state {
+// NewState initializes a new State instance.
+func NewState(graph graph, start *vertex) *State {
 	pq := make(PriorityQueue, len(graph))
 
-	state := state{
+	state := State{
 		graph:         graph,
 		start:         start,
 		priorityQueue: &pq,
@@ -46,7 +49,7 @@ func newState(graph graph, start *vertex) *state {
 	return &state
 }
 
-func (state *state) getDistance(vertex *vertex) int64 {
+func (state *State) getDistance(vertex *vertex) int64 {
 	if vertex == state.start {
 		return 0
 	}
@@ -60,14 +63,14 @@ func (state *state) getDistance(vertex *vertex) int64 {
 	return maxDistance
 }
 
-func (state *state) increasePriority(vertex *vertex, amount int64) {
+func (state *State) increasePriority(vertex *vertex, amount int64) {
 	item, ok := state.itemMap[vertex]
 	if ok {
 		state.priorityQueue.IncreasePriority(item, amount)
 	}
 }
 
-func (state *state) search() {
+func (state *State) search() {
 	for state.priorityQueue.Len() > 0 {
 		pqItem := heap.Pop(state.priorityQueue).(*Item)
 		currentVert := state.graph[pqItem.value]
@@ -85,7 +88,7 @@ func (state *state) search() {
 	}
 }
 
-func (state *state) pathTo(vtx *vertex) path {
+func (state *State) pathTo(vtx *vertex) path {
 	path := path{}
 	current := vtx
 
