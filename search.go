@@ -12,6 +12,7 @@ const maxDistance int64 = math.MaxInt64
 type State struct {
 	graph         graph             // The graph to search
 	start         *Vertex           // The vertex to search from
+	departAt      int64             // The departure time
 	priorityQueue *PriorityQueue    // Used to determine next vertex to explore
 	distances     map[*Vertex]int64 // Current distances for each vertex
 	predecessors  map[*Vertex]*Edge // Predecessor edge used to reach each vertex
@@ -19,12 +20,13 @@ type State struct {
 }
 
 // NewState initializes a new State instance.
-func NewState(graph graph, start *Vertex) *State {
+func NewState(graph graph, start *Vertex, departAt int64) *State {
 	pq := make(PriorityQueue, len(graph))
 
 	state := State{
 		graph:         graph,
 		start:         start,
+		departAt:      departAt,
 		priorityQueue: &pq,
 		distances:     map[*Vertex]int64{},
 		predecessors:  map[*Vertex]*Edge{},
@@ -72,10 +74,12 @@ func (state *State) increasePriority(vertex *Vertex, amount int64) {
 
 // Search performs a shortest-path search over the State graph.
 func (state *State) Search() {
+	currentTime := state.departAt
+
 	for state.priorityQueue.Len() > 0 {
 		pqItem := heap.Pop(state.priorityQueue).(*Item)
 		currentVert := state.graph[pqItem.value]
-		for _, edge := range currentVert.Edges {
+		for _, edge := range currentVert.EdgesFrom(currentTime) {
 			successor := edge.To
 			currentDistance := state.getDistance(currentVert)
 			successorDistance := state.getDistance(successor)
@@ -84,6 +88,7 @@ func (state *State) Search() {
 				state.distances[successor] = newDistance
 				state.predecessors[successor] = edge
 				state.increasePriority(successor, newDistance)
+				currentTime = edge.Arrives
 			}
 		}
 	}
