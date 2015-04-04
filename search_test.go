@@ -7,10 +7,10 @@ func TestSuccesfulPathSearch(t *testing.T) {
 	start := graph["milsons point"]
 	end := graph["martin place"]
 	expected := "milsons point -> wynyard -> town hall -> martin place"
-	state := NewState(graph, start, 0)
+	state := NewState(graph, start, end, 0)
 
 	state.Search()
-	path := state.PathTo(end)
+	path := state.Path()
 
 	if path.String() != expected {
 		t.Fatalf("Expected %v but got %v", expected, path)
@@ -22,10 +22,10 @@ func TestImpossibleRoute(t *testing.T) {
 	graph.addVertex("nowhere")
 	start := graph["milsons point"]
 	end := graph["nowhere"]
-	state := NewState(graph, start, 0)
+	state := NewState(graph, start, end, 0)
 
 	state.Search()
-	path := state.PathTo(end)
+	path := state.Path()
 
 	if path.String() != "" {
 		t.Fatalf("Expected empty path but got %v", path)
@@ -33,12 +33,11 @@ func TestImpossibleRoute(t *testing.T) {
 }
 
 func TestDepartureTimeAllowsShorterRoute(t *testing.T) {
-	state := buildDepartureTimeTestGraph(0)
-	destination := state.graph["town hall"]
+	state := buildDepartureTimeTestGraph("town hall", 0)
 	expected := "milsons point -> town hall"
 
 	state.Search()
-	path := state.PathTo(destination)
+	path := state.Path()
 
 	if path.String() != expected {
 		t.Fatalf("Expected %v but got %v", expected, path)
@@ -46,24 +45,35 @@ func TestDepartureTimeAllowsShorterRoute(t *testing.T) {
 }
 
 func TestDepartureTimeRequiresLongerRoute(t *testing.T) {
-	state := buildDepartureTimeTestGraph(2)
-	destination := state.graph["town hall"]
+	state := buildDepartureTimeTestGraph("town hall", 2)
 	expected := "milsons point -> wynyard -> town hall"
 
 	state.Search()
-	path := state.PathTo(destination)
+	path := state.Path()
 
 	if path.String() != expected {
 		t.Fatalf("Expected %v but got %v", expected, path)
 	}
 }
 
+func TestDepartureTimeMeansNoRouteIsPossible(t *testing.T) {
+	state := buildDepartureTimeTestGraph("town hall", 10)
+
+	state.Search()
+	path := state.Path()
+
+	if path.String() != "" {
+		t.Fatalf("Expected empty path but got %v", path)
+	}
+}
+
 func BenchmarkDjikstra(b *testing.B) {
 	graph := buildTestGraph()
 	start := graph["milsons point"]
+	end := graph["central"]
 
 	for n := 0; n < b.N; n++ {
-		state := NewState(graph, start, 0)
+		state := NewState(graph, start, end, 0)
 		state.Search()
 	}
 }
@@ -76,13 +86,14 @@ func buildTestGraph() graph {
 	return graph
 }
 
-func buildDepartureTimeTestGraph(departAt int64) *State {
+func buildDepartureTimeTestGraph(destination string, departAt int64) *State {
 	graph := make(graph)
 	addRoute(graph, []string{"milsons point", "town hall"}, 0)
 	addRoute(graph, []string{"milsons point", "wynyard", "town hall"}, 2)
 	start := graph["milsons point"]
+	end := graph[destination]
 
-	return NewState(graph, start, departAt)
+	return NewState(graph, start, end, departAt)
 }
 
 func addRoute(g graph, stops []string, startTime int64) {
