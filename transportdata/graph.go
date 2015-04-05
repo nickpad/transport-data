@@ -1,8 +1,8 @@
 package transportdata
 
-type graph map[string]*Vertex
+type Graph map[string]*Vertex
 
-func (g graph) addVertex(vertexID string) *Vertex {
+func (g Graph) addVertex(vertexID string) *Vertex {
 	_, ok := g[vertexID]
 
 	if !ok {

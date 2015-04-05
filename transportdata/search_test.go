@@ -78,8 +78,8 @@ func BenchmarkDjikstra(b *testing.B) {
 	}
 }
 
-func buildTestGraph() graph {
-	graph := make(graph)
+func buildTestGraph() Graph {
+	graph := make(Graph)
 	addRoute(graph, []string{"milsons point", "wynyard", "town hall", "central"}, 0)
 	addRoute(graph, []string{"town hall", "martin place", "kings cross", "edgecliff", "bondi"}, 4)
 	addRoute(graph, []string{"central", "museum", "st james", "circular quay", "wynyard"}, 6)
@@ -87,7 +87,7 @@ func buildTestGraph() graph {
 }
 
 func buildDepartureTimeTestGraph(destination string, departAt int64) *State {
-	graph := make(graph)
+	graph := make(Graph)
 	addRoute(graph, []string{"milsons point", "town hall"}, 0)
 	addRoute(graph, []string{"milsons point", "wynyard", "town hall"}, 2)
 	start := graph["milsons point"]
@@ -96,7 +96,7 @@ func buildDepartureTimeTestGraph(destination string, departAt int64) *State {
 	return NewState(graph, start, end, departAt)
 }
 
-func addRoute(g graph, stops []string, startTime int64) {
+func addRoute(g Graph, stops []string, startTime int64) {
 	time := startTime
 	for _, name := range stops {
 		g.addVertex(name)

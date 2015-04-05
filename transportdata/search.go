@@ -10,7 +10,7 @@ const maxDistance int64 = math.MaxInt64
 
 // State stores the current state of a search.
 type State struct {
-	graph         graph             // The graph to search
+	graph         Graph             // The graph to search
 	start         *Vertex           // The vertex to search from
 	end           *Vertex           // The vertex to search to
 	departAt      int64             // The departure time
@@ -21,7 +21,7 @@ type State struct {
 }
 
 // NewState initializes a new State instance.
-func NewState(graph graph, start, end *Vertex, departAt int64) *State {
+func NewState(graph Graph, start, end *Vertex, departAt int64) *State {
 	pq := make(PriorityQueue, len(graph))
 
 	state := State{
