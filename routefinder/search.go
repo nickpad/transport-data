@@ -38,7 +38,7 @@ func NewState(graph Graph, start, end *Vertex, departAt int64) *State {
 	i := 0
 	for _, vtx := range graph {
 		pqItem := &Item{
-			value:    vtx.VertexID,
+			value:    vtx,
 			priority: maxDistance - state.getDistance(vtx),
 			index:    i,
 		}
@@ -56,8 +56,7 @@ func NewState(graph Graph, start, end *Vertex, departAt int64) *State {
 func (state *State) nextVertex() *Vertex {
 	if len(*state.priorityQueue) > 0 {
 		item := heap.Pop(state.priorityQueue).(*Item)
-		vertexId := item.value
-		return state.graph[vertexId]
+		return item.value
 	}
 	return nil
 }
@@ -99,7 +98,7 @@ func (state *State) Search() {
 		for _, edge := range currentVert.EdgesFrom(currentTime) {
 			successor := edge.To
 			successorDistance := state.getDistance(successor)
-			newDistance := currentDistance + edge.weight()
+			newDistance := currentDistance + edge.Weight()
 			if newDistance < successorDistance {
 				state.distances[successor] = newDistance
 				state.predecessors[successor] = edge

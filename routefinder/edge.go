@@ -8,6 +8,6 @@ type Edge struct {
 	Arrives int64
 }
 
-func (edge *Edge) weight() int64 {
+func (edge *Edge) Weight() int64 {
 	return edge.Arrives - edge.Departs
 }

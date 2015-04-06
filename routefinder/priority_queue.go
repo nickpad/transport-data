@@ -7,9 +7,9 @@ import "container/heap"
 
 // An Item is something we manage in a priority queue.
 type Item struct {
-	value    string // The value of the item; arbitrary.
-	priority int64  // The priority of the item in the queue.
-	index    int    // The index of the item in the heap.
+	value    *Vertex // The value of the item; arbitrary.
+	priority int64   // The priority of the item in the queue.
+	index    int     // The index of the item in the heap.
 }
 
 // A PriorityQueue implements heap.Interface and holds Items.

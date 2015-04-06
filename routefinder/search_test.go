@@ -19,7 +19,7 @@ func TestSuccesfulPathSearch(t *testing.T) {
 
 func TestImpossibleRoute(t *testing.T) {
 	graph := buildTestGraph()
-	graph.addVertex("nowhere")
+	graph.AddVertex("nowhere")
 	start := graph["milsons point"]
 	end := graph["nowhere"]
 	state := NewState(graph, start, end, 0)
@@ -99,7 +99,7 @@ func buildDepartureTimeTestGraph(destination string, departAt int64) *State {
 func addRoute(g Graph, stops []string, startTime int64) {
 	time := startTime
 	for _, name := range stops {
-		g.addVertex(name)
+		g.AddVertex(name)
 	}
 	for i := 0; i < len(stops)-1; i++ {
 		vertex := g[stops[i]]
