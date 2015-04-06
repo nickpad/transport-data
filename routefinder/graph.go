@@ -1,4 +1,4 @@
-package transportdata
+package routefinder
 
 type Graph map[string]*Vertex
 

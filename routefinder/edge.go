@@ -1,4 +1,4 @@
-package transportdata
+package routefinder
 
 // Edge joins two vertices and has a departure and arrival time.
 type Edge struct {
