@@ -19,4 +19,6 @@ curl --user $username:$password $location --continue-at - --output $data_dir/dat
 cd $data_dir
 unzip -o data.zip
 rm data.zip
+# Remove byte order marks which cause issues with csvkit.
+dos2unix *.txt
 cd $working_dir
